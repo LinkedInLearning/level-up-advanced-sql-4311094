@@ -1,0 +1,1 @@
+-- Displays the number of cars sold this month, and last month

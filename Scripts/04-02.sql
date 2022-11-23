@@ -1,0 +1,1 @@
+-- Create a report showing sales per month and an annual total
