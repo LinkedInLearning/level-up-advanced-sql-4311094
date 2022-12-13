@@ -1,10 +1,11 @@
 -- Display report for employees who have sold at least 10 cars
 
-SELECT e.employeeId, count(*) as NumOfCarsSold, min(salesAmount) as MinSalesAmount, max(salesAmount) as MaxSalesAmount
-FROM sales s
-INNER JOIN employee e
-    on s.employeeId = e.employeeId
-GROUP BY e.employeeId
-HAVING count(*) > 10
+SELECT emp.employeeId, count(*) AS NumOfCarsSold, MIN(salesAmount) AS MinSalesAmount, MAX(salesAmount) AS MaxSalesAmount
+FROM sales sls
+INNER JOIN employee emp
+    ON sls.employeeId = emp.employeeId
+WHERE sls.soldDate >= date('now','start of year')
+GROUP BY emp.employeeId
+HAVING count(*) > 5
 
 -- note about not being able to reference NumOfCarsSold for having
