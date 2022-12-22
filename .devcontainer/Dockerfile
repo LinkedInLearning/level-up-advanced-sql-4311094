@@ -5,7 +5,6 @@ ARG VARIANT="3.16"
 FROM mcr.microsoft.com/vscode/devcontainers/base:0-alpine-${VARIANT}
 
 # ** [Optional] Uncomment this section to install additional packages. **
-# RUN apk update \
-#     && apk add --no-cache <your-package-list-here>
-
+#RUN echo $HTTP_PROXY && echo $http_proxy && unset HTTP_PROXY && unset http_proxy && apt-get update
+RUN apk update
 RUN apk add --no-cache sqlite
