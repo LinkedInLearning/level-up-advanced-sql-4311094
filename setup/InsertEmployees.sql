@@ -98,3 +98,5 @@ insert into employee (employeeId, firstName, LastName, title, startDate, manager
 insert into employee (employeeId, firstName, LastName, title, startDate, managerId) values (100,'Lise', 'Bulbeck', 'Engineer', '2022-03-02 08:30:13',89);
 insert into employee (employeeId, firstName, LastName, title, startDate, managerId) values (101,'Keefer', 'Fretwell', 'Engineer', '2021-12-02 08:12:53',89);
 insert into employee (employeeId, firstName, LastName, title, startDate, managerId) values (102,'Karl', 'Heskey', 'Manager', '2022-08-18 15:58:55',1);
+insert into employee (employeeId, firstName, LastName, title, startDate, managerId) values (103,'Bob', 'Smith', 'Sales Person', '2021-12-02 08:12:53',89);
+insert into employee (employeeId, firstName, LastName, title, startDate, managerId) values (104,'Carla', 'Owen', 'Sales Person', '2022-08-18 15:58:55',89);
