@@ -29,5 +29,6 @@
       "name": "Test",
       "database": "${workspaceFolder:Demos}/CarsForAll.db"
     }
-  ]
+  ],
+  "workbench.editor.openSideBySideDirection": "down"
 }
