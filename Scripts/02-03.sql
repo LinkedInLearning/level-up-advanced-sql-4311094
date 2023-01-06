@@ -1,4 +1,4 @@
--- Display report for employees who have sold at least 10 cars
+-- Display report for employees who have sold at least 5 cars
 
 SELECT emp.employeeId, 
     count(*) AS NumOfCarsSold, 
