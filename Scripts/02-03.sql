@@ -1,6 +1,9 @@
 -- Display report for employees who have sold at least 10 cars
 
-SELECT emp.employeeId, count(*) AS NumOfCarsSold, MIN(salesAmount) AS MinSalesAmount, MAX(salesAmount) AS MaxSalesAmount
+SELECT emp.employeeId, 
+    count(*) AS NumOfCarsSold, 
+    MIN(salesAmount) AS MinSalesAmount, 
+    MAX(salesAmount) AS MaxSalesAmount
 FROM sales sls
 INNER JOIN employee emp
     ON sls.employeeId = emp.employeeId
