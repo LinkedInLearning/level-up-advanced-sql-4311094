@@ -1,7 +1,5 @@
 -- List all customers & their sales, even if some data is gone
 
--- FULL OUTER JOIN NOT SUPPORTED
-
 SELECT cus.firstName, cus.lastName, cus.email, sls.salesAmount, sls.soldDate
 FROM customer cus
 INNER JOIN sales sls
