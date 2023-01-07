@@ -8,6 +8,3 @@ SELECT soldYear, FORMAT("$%.2f", sum(salesAmount)) AS AnnualSales
 FROM cte
 GROUP BY soldYear
 ORDER BY soldYear
-
--- FORMAT("$%.2f" - does 2 decimal points and handles any rounding
--- can use ,d to get commas to seperate 100's ... but can't combine these currently
