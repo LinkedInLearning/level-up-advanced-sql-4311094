@@ -11,18 +11,41 @@ AND sls.soldDate < '2022-01-01'
 
 -- 2. implement case statements for each month
 SELECT emp.firstName, emp.lastName,
-  CASE WHEN strftime('%m', soldDate) = '01' THEN salesAmount END AS JanSales,
-  CASE WHEN strftime('%m', soldDate) = '02' THEN salesAmount END AS FebSales,
-  CASE WHEN strftime('%m', soldDate) = '03' THEN salesAmount END AS MarSales,
-  CASE WHEN strftime('%m', soldDate) = '04' THEN salesAmount END AS AprSales,
-  CASE WHEN strftime('%m', soldDate) = '05' THEN salesAmount END AS MaySales,
-  CASE WHEN strftime('%m', soldDate) = '06' THEN salesAmount END AS JunSales,
-  CASE WHEN strftime('%m', soldDate) = '07' THEN salesAmount END AS JulSales,
-  CASE WHEN strftime('%m', soldDate) = '08' THEN salesAmount END AS AugSales,
-  CASE WHEN strftime('%m', soldDate) = '09' THEN salesAmount END AS SepSales,
-  CASE WHEN strftime('%m', soldDate) = '10' THEN salesAmount END AS OctSales,
-  CASE WHEN strftime('%m', soldDate) = '11' THEN salesAmount END AS NovSales,
-  CASE WHEN strftime('%m', soldDate) = '12' THEN salesAmount END AS DecSales
+  CASE WHEN strftime('%m', soldDate) = '01'
+      THEN salesAmount END AS JanSales,
+  CASE 
+      WHEN strftime('%m', soldDate) = '02'
+      THEN salesAmount END AS FebSales,
+  CASE 
+      WHEN strftime('%m', soldDate) = '03'
+      THEN salesAmount END AS MarSales,
+  CASE 
+      WHEN strftime('%m', soldDate) = '04' 
+      THEN salesAmount END AS AprSales,
+  CASE 
+      WHEN strftime('%m', soldDate) = '05' 
+      THEN salesAmount END AS MaySales,
+  CASE 
+      WHEN strftime('%m', soldDate) = '06' 
+      THEN salesAmount END AS JunSales,
+  CASE 
+      WHEN strftime('%m', soldDate) = '07' 
+      THEN salesAmount END AS JulSales,
+  CASE 
+      WHEN strftime('%m', soldDate) = '08' 
+      THEN salesAmount END AS AugSales,
+  CASE 
+      WHEN strftime('%m', soldDate) = '09' 
+      THEN salesAmount END AS SepSales,
+  CASE 
+      WHEN strftime('%m', soldDate) = '10' 
+      THEN salesAmount END AS OctSales,
+  CASE 
+      WHEN strftime('%m', soldDate) = '11' 
+      THEN salesAmount END AS NovSales,
+  CASE 
+      WHEN strftime('%m', soldDate) = '12' 
+      THEN salesAmount END AS DecSales
 FROM sales sls
 INNER JOIN employee emp
   ON sls.employeeId = emp.employeeId
@@ -32,18 +55,42 @@ ORDER BY emp.lastName, emp.firstName
 
 -- 3. finally group the data
 SELECT emp.firstName, emp.lastName,
-  sum(CASE WHEN strftime('%m', soldDate) = '01' THEN salesAmount END) AS JanSales,
-  sum(CASE WHEN strftime('%m', soldDate) = '02' THEN salesAmount END) AS FebSales,
-  sum(CASE WHEN strftime('%m', soldDate) = '03' THEN salesAmount END) AS MarSales,
-  sum(CASE WHEN strftime('%m', soldDate) = '04' THEN salesAmount END) AS AprSales,
-  sum(CASE WHEN strftime('%m', soldDate) = '05' THEN salesAmount END) AS MaySales,
-  sum(CASE WHEN strftime('%m', soldDate) = '06' THEN salesAmount END) AS JunSales,
-  sum(CASE WHEN strftime('%m', soldDate) = '07' THEN salesAmount END) AS JulSales,
-  sum(CASE WHEN strftime('%m', soldDate) = '08' THEN salesAmount END) AS AugSales,
-  sum(CASE WHEN strftime('%m', soldDate) = '09' THEN salesAmount END) AS SepSales,
-  sum(CASE WHEN strftime('%m', soldDate) = '10' THEN salesAmount END) AS OctSales,
-  sum(CASE WHEN strftime('%m', soldDate) = '11' THEN salesAmount END) AS NovSales,
-  sum(CASE WHEN strftime('%m', soldDate) = '12' THEN salesAmount END) AS DecSales
+  SUM(CASE 
+        WHEN strftime('%m', soldDate) = '01' 
+        THEN salesAmount END) AS JanSales,
+  SUM(CASE 
+        WHEN strftime('%m', soldDate) = '02' 
+        THEN salesAmount END) AS FebSales,
+  SUM(CASE 
+        WHEN strftime('%m', soldDate) = '03' 
+        THEN salesAmount END) AS MarSales,
+  SUM(CASE 
+        WHEN strftime('%m', soldDate) = '04' 
+        THEN salesAmount END) AS AprSales,
+  SUM(CASE 
+        WHEN strftime('%m', soldDate) = '05' 
+        THEN salesAmount END) AS MaySales,
+  SUM(CASE 
+        WHEN strftime('%m', soldDate) = '06' 
+        THEN salesAmount END) AS JunSales,
+  SUM(CASE 
+        WHEN strftime('%m', soldDate) = '07' 
+        THEN salesAmount END) AS JulSales,
+  SUM(CASE 
+        WHEN strftime('%m', soldDate) = '08' 
+        THEN salesAmount END) AS AugSales,
+  SUM(CASE 
+        WHEN strftime('%m', soldDate) = '09' 
+        THEN salesAmount END) AS SepSales,
+  SUM(CASE 
+        WHEN strftime('%m', soldDate) = '10' 
+        THEN salesAmount END) AS OctSales,
+  SUM(CASE 
+        WHEN strftime('%m', soldDate) = '11' 
+        THEN salesAmount END) AS NovSales,
+  SUM(CASE 
+        WHEN strftime('%m', soldDate) = '12' 
+        THEN salesAmount END) AS DecSales
 FROM sales sls
 INNER JOIN employee emp
   ON sls.employeeId = emp.employeeId
