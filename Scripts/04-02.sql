@@ -28,6 +28,3 @@ SELECT soldYear, soldMonth, salesAmount,
     ORDER BY soldYear, soldMonth) AS AnnualSales_RunningTotal
 FROM cte_sales
 ORDER BY soldYear, soldMonth
-
--- partition over the year so that the running total resets annually
--- group by soldYear, soldMonth to collect the data from the sales table how we need it for the report
