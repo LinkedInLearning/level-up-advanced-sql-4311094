@@ -12,7 +12,7 @@ SELECT strftime('%Y', soldDate) AS soldYear,
   SUM(salesAmount) AS salesAmount
 FROM sales
 GROUP BY soldYear, soldMonth
-ORDER BY  soldYear, soldMonth
+ORDER BY soldYear, soldMonth
 
 -- add the window function - simplify with cte
 with cte_sales as (
