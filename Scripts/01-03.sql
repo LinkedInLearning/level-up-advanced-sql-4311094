@@ -17,4 +17,4 @@ SELECT cus.firstName, cus.lastName, cus.email, sls.salesAmount, sls.soldDate
 FROM sales sls
 LEFT JOIN customer cus
     ON cus.customerId = sls.customerId
-WHERE sls.salesId IS NULL;
+WHERE cus.customerId IS NULL;
