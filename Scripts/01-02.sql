@@ -1,6 +1,6 @@
 -- Find sales people who have zero sales
 
-SELECT emp.firstName, emp.lastName, emp.title, emp.startDate, sls.salesId
+SELECT emp.firstName, emp.lastName, emp.title, emp.startDate, sls.salesId,sls.salesAmount
 FROM employee emp
 LEFT JOIN sales sls
     ON emp.employeeId = sls.employeeId
