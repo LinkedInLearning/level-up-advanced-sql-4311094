@@ -53,3 +53,88 @@ JOIN sales s
   on e.employeeId = s.employeeId
 group by e.employeeId, e.firstName, e.lastName
 order by e.firstName;
+
+
+-- 5. List the least and most expensive car sold by each employee this year
+select employeeId, "Least expensive", min(salesAmount) Amount
+from sales
+where strftime('%Y', soldDate) = '2023'
+UNION
+select employeeId, "Most expensive", max(salesAmount)
+from sales
+where strftime('%Y', soldDate) = '2023';
+
+select employeeId, min(salesAmount), max(salesAmount)
+from sales
+where strftime('%Y', soldDate) = '2023';
+
+select employeeId, min(salesAmount), max(salesAmount)
+from sales
+where soldDate >= date('now', 'start of year');
+
+-- 6. list of employess who have made 5+ sales
+select employeeId, count(*) NoCarsSold
+from sales
+where soldDate >= date('now', 'start of year')
+group by employeeId
+having count(*) >5;
+
+
+-- 7. Total sales per year
+select strftime('%Y', soldDate) Year, round(sum(salesAmount),2) TotalSales
+from sales
+group by 1;
+
+with years as (
+  select strftime('%Y', soldDate) Year, salesAmount
+  from sales)
+select year, FORMAT("$%.2f", sum(salesAmount)) AS AnnualSales
+from years
+group by Year;
+
+-- 8. Amount of sales per employee for each month in 2021
+
+with months_21 as (
+  select strftime('%m', soldDate) Month, employeeId, salesAmount
+  from sales
+  where strftime('%Y', soldDate) = '2021')
+select employeeId, Month, sum(salesAmount) MonthlySales
+from months_21
+group by employeeId
+order by 1, 2, 3;
+
+/* solution says that the output should act like a matrix 
+with employees as rows, months as columns and values as monthly sales
+*/
+CREATE TABLE months_lookup (Month TEXT);
+INSERT INTO months_lookup VALUES 
+('01'), ('02'), ('03'), ('04'), ('05'), ('06'), ('07'), ('08'), ('09'), ('10'), ('11'), ('12');
+SELECT * FROM months_lookup;
+
+WITH months_21_sales AS (
+  SELECT strftime('%m', soldDate) AS Month, employeeId, SUM(salesAmount) AS MonthlySales
+  FROM sales
+  WHERE strftime('%Y', soldDate) = '2021'
+  GROUP BY strftime('%m', soldDate), employeeId
+),
+data_with_nulls AS (
+    SELECT e.employeeId, m.Month, 
+           coalesce(s.MonthlySales, 0) AS MonthlySales
+    FROM (SELECT DISTINCT employeeId FROM sales) e
+    CROSS JOIN months_lookup m
+    LEFT JOIN months_21_sales s ON e.employeeId = s.employeeId AND m.Month = s.Month
+)
+SELECT employeeId, 
+       group_concat(MonthlySales) AS MonthlySalesString
+FROM (
+    SELECT employeeId, MonthlySales
+    FROM data_with_nulls
+    ORDER BY employeeId, Month
+  )
+GROUP BY employeeId;
+
+SELECT * 
+FROM crosstab(
+  'YOUR SECOND QUERY HERE', 
+  'SELECT * FROM months_lookup ORDER BY Month'
+) AS final_result (employeeId INT, Jan NUMERIC, Feb NUMERIC, Mar NUMERIC, Apr NUMERIC, May NUMERIC, Jun NUMERIC, Jul NUMERIC, Aug NUMERIC, Sep NUMERIC, Oct NUMERIC, Nov NUMERIC, Dec NUMERIC);
