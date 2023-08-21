@@ -1,10 +1,11 @@
 -- 1. list employess and their immediate managers
-select e.firstName, e.lastName, e.title, m.firstName managerFirstName, m.lastName managerLastName
+select e.firstName, e.lastName, e.title, m.firstName managerFirstName, m.lastName managerLastName, m.title
 from employee e
 join employee m
   on e.managerId = m.employeeId;
 
 -- 2. list sales people with zero sales
+/* check first if we have missing values for salesAmount*/
 select *
 from sales
 where salesAmount is NULL; /* there are no people without sales, in the sales table*/
@@ -56,6 +57,7 @@ order by e.firstName;
 
 
 -- 5. List the least and most expensive car sold by each employee this year
+/* not the proper solution, was just playing with union*/
 select employeeId, "Least expensive", min(salesAmount) Amount
 from sales
 where strftime('%Y', soldDate) = '2023'
@@ -64,10 +66,12 @@ select employeeId, "Most expensive", max(salesAmount)
 from sales
 where strftime('%Y', soldDate) = '2023';
 
+/* the actual solution*/
 select employeeId, min(salesAmount), max(salesAmount)
 from sales
 where strftime('%Y', soldDate) = '2023';
 
+/*alternative to express the date*/
 select employeeId, min(salesAmount), max(salesAmount)
 from sales
 where soldDate >= date('now', 'start of year');
@@ -85,6 +89,7 @@ select strftime('%Y', soldDate) Year, round(sum(salesAmount),2) TotalSales
 from sales
 group by 1;
 
+/* using CTE, and FORMAT function*/
 with years as (
   select strftime('%Y', soldDate) Year, salesAmount
   from sales)
@@ -93,48 +98,131 @@ from years
 group by Year;
 
 -- 8. Amount of sales per employee for each month in 2021
-
 with months_21 as (
   select strftime('%m', soldDate) Month, employeeId, salesAmount
   from sales
-  where strftime('%Y', soldDate) = '2021')
+  where strftime('%Y', soldDate) = '2021'
+  )
 select employeeId, Month, sum(salesAmount) MonthlySales
 from months_21
 group by employeeId
 order by 1, 2, 3;
 
-/* solution says that the output should act like a matrix 
-with employees as rows, months as columns and values as monthly sales
+/* the excerise asks that the output should be matrix 
+with employees as rows, months as columns and values as monthly sales,
+even if at some intersections we will have NULLs
 */
 CREATE TABLE months_lookup (Month TEXT);
 INSERT INTO months_lookup VALUES 
 ('01'), ('02'), ('03'), ('04'), ('05'), ('06'), ('07'), ('08'), ('09'), ('10'), ('11'), ('12');
+
 SELECT * FROM months_lookup;
 
-WITH months_21_sales AS (
-  SELECT strftime('%m', soldDate) AS Month, employeeId, SUM(salesAmount) AS MonthlySales
-  FROM sales
-  WHERE strftime('%Y', soldDate) = '2021'
-  GROUP BY strftime('%m', soldDate), employeeId
-),
-data_with_nulls AS (
-    SELECT e.employeeId, m.Month, 
-           coalesce(s.MonthlySales, 0) AS MonthlySales
-    FROM (SELECT DISTINCT employeeId FROM sales) e
-    CROSS JOIN months_lookup m
-    LEFT JOIN months_21_sales s ON e.employeeId = s.employeeId AND m.Month = s.Month
+WITH months_21 AS (
+    SELECT strftime('%m', soldDate) AS Month, employeeId, SUM(salesAmount) AS MonthlySales
+    FROM sales
+    WHERE strftime('%Y', soldDate) = '2021'
+    GROUP BY employeeId, strftime('%m', soldDate)
 )
-SELECT employeeId, 
-       group_concat(MonthlySales) AS MonthlySalesString
-FROM (
-    SELECT employeeId, MonthlySales
-    FROM data_with_nulls
-    ORDER BY employeeId, Month
-  )
-GROUP BY employeeId;
+SELECT 
+    employeeId, 
+    COALESCE(MAX(CASE WHEN Month = '01' THEN MonthlySales END), 0) AS Jan,
+    COALESCE(MAX(CASE WHEN Month = '02' THEN MonthlySales END), 0) AS Feb,
+    COALESCE(MAX(CASE WHEN Month = '03' THEN MonthlySales END), 0) AS Mar,
+    COALESCE(MAX(CASE WHEN Month = '04' THEN MonthlySales END), 0) AS Apr,
+    COALESCE(MAX(CASE WHEN Month = '05' THEN MonthlySales END), 0) AS May,
+    COALESCE(MAX(CASE WHEN Month = '06' THEN MonthlySales END), 0) AS Jun,
+    COALESCE(MAX(CASE WHEN Month = '07' THEN MonthlySales END), 0) AS Jul,
+    COALESCE(MAX(CASE WHEN Month = '08' THEN MonthlySales END), 0) AS Aug,
+    COALESCE(MAX(CASE WHEN Month = '09' THEN MonthlySales END), 0) AS Sep,
+    COALESCE(MAX(CASE WHEN Month = '10' THEN MonthlySales END), 0) AS Oct,
+    COALESCE(MAX(CASE WHEN Month = '11' THEN MonthlySales END), 0) AS Nov,
+    COALESCE(MAX(CASE WHEN Month = '12' THEN MonthlySales END), 0) AS Dec
+FROM months_21
+GROUP BY employeeId
+ORDER BY employeeId;
 
-SELECT * 
-FROM crosstab(
-  'YOUR SECOND QUERY HERE', 
-  'SELECT * FROM months_lookup ORDER BY Month'
-) AS final_result (employeeId INT, Jan NUMERIC, Feb NUMERIC, Mar NUMERIC, Apr NUMERIC, May NUMERIC, Jun NUMERIC, Jul NUMERIC, Aug NUMERIC, Sep NUMERIC, Oct NUMERIC, Nov NUMERIC, Dec NUMERIC);
+
+-- 9. List all sales where car was electric
+select * from model m
+join inventory i on i.modelId = m.modelId
+join sales s on s.inventoryId = i.inventoryId
+WHERE EngineType = 'Electric' ;
+
+/*exercise asks to use a subquery*/
+select s.soldDate, s.salesAmount, i.colour, i.year
+from sales s
+join inventory i on s.inventoryId = i.inventoryId
+where i.modelId in (select m.modelId from model m
+      where EngineType = 'Electric');
+
+
+
+-- 10. List people's sales and rank the car models they've sold most of
+select * from model;
+select * from sales;
+select * from inventory;
+
+select employeeId
+      , model
+      , count(model) NumberSold
+      , rank() over (PARTITION by employeeId order by count(model) desc) rnk
+from sales s
+join inventory i on i.inventoryId = s.inventoryId
+join model m on m.modelId = i.modelId
+group by employeeId, model;
+
+
+-- 11. Sales Report for total sales per month and an annual running total
+select * from sales;
+
+WITH MonthlySales AS (
+    SELECT strftime('%Y', soldDate) AS Year
+          , strftime('%m', soldDate) AS Month 
+          , SUM(salesAmount) AS MonthlySalesAmount
+    FROM sales
+    GROUP BY Year, Month
+)
+SELECT Year
+      , Month
+      , format("$%.2f", MonthlySalesAmount) AS MonthlySales
+      , format("$%.2f", SUM(MonthlySalesAmount) OVER (PARTITION BY Year ORDER BY Year, Month)) AS YearlyRunningTotal
+FROM MonthlySales
+ORDER BY Year, Month;
+
+-- 12. A report showing number of cards sold this month and last month
+/* i wanted to use self-join for this, to rember the trick for the ON clause*/
+SELECT 
+     strftime('%Y-%m', sc.soldDate) AS current_month
+    ,COUNT(DISTINCT sc.salesId) AS current_month_count
+    ,COUNT(DISTINCT sp.salesId) AS previous_month_count
+FROM sales sc
+LEFT JOIN sales sp ON strftime('%Y-%m', sc.soldDate) = strftime('%Y-%m', date(sp.soldDate, '+1 month'))
+GROUP BY current_month;
+
+/*solving with window functions, as per the exercise*/
+/* Understanding LAG & LEAD to get the previous month's, 
+current's month and next month's sales*/
+SELECT strftime('%m', soldDate) Month
+      , sum(salesAmount) currnet_month_sales
+      , LAG(sum(salesAmount)) OVER (ORDER BY strftime('%m', soldDate)) as previous_month_sales
+      , LEAD(sum(salesAmount)) OVER (ORDER BY strftime('%m', soldDate)) AS next_month_sales
+FROM sales
+GROUP by Month;
+
+
+SELECT 
+    strftime('%Y-%m', soldDate) AS current_month,
+    COUNT(DISTINCT salesId) AS current_month_count,
+    LAG(COUNT(*), 1, 0) OVER (ORDER BY strftime('%Y-%m', soldDate)) AS previous_month_count
+FROM sales
+GROUP BY current_month
+ORDER BY current_month;
+
+
+
+
+
+
+
+
