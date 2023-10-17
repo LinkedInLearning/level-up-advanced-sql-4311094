@@ -1,0 +1,1 @@
+SELECT * FROM employee LIMIT 10;
