@@ -35,3 +35,4 @@ INNER JOIN inventory inv
 INNER JOIN model mdl
   ON mdl.modelId = inv.modelId
 GROUP BY emp.firstName, emp.lastName, mdl.model
+order by emp.employeeId
