@@ -10,3 +10,5 @@ SELECT soldYear,
 FROM cte
 GROUP BY soldYear
 ORDER BY soldYear
+
+
