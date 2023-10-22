@@ -1,0 +1,1 @@
+select strftime('%Y', s.soldDate) from sales s;
