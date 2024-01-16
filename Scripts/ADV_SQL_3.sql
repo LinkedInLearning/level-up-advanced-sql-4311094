@@ -66,3 +66,77 @@ INNER JOIN inventory inv
 INNER JOIN model model
   ON mdl.modelId = inv.modelId
 GROUP BY emp.firstName, emp.lastName, mdl.model
+
+
+-- iii) Add windowing function
+SELECT emp.firstName, emp.lastName, mdl.model,
+  count(model) AS NumberSold,
+  rank() OVER (PARTITION BY sls.employeeId
+              ORDER BY count(model) desc) AS Rank
+FROM sales sls
+INNER JOIN employee emp
+  ON sls.employeeId = emp.employeeId
+INNER JOIN inventory inv
+  ON inv.inventoryId = sls.inventoryId
+INNER JOIN model model
+  ON mdl.modelId = inv.modelId
+GROUP BY emp.firstName, emp.lastName, mdl.model
+
+
+
+-- 11. ----------
+-- Create a report showing Sales Per Month and an Annual Total
+
+
+-- i) Get data
+SELECT strftime('%Y', soldDate) AS soldYear,
+  strftime('%m', soldDate) AS soldMonth,
+  salesAmount
+FROM sales
+
+
+-- ii) Apply grouping
+SELECT strftime('%Y', soldDate) AS soldYear,
+  strftime('%m', soldDate) AS soldMonth,
+  SUM(salesAmount) AS salesAmount
+FROM sales
+GROUP BY soldYear, soldMonth
+ORDER BY soldYear, soldMonth
+
+
+-- iii) Add window function - Simplify with CTE
+WITH cte_sales AS (
+SELECT strftime('%Y', soldDate) AS soldYear,
+  strftime('%m', soldDate) AS soldMonth,
+  SUM(salesAmount) AS salesAmount
+FROM sales
+GROUP BY soldYear, soldMonth
+)
+SELECT soldYear, soldMonth, salesAmount,
+  SUM(salesAmount) OVER (
+    PARTITION BY soldYear
+    ORDER BY soldYear, soldMonth) AS AnnualSales_RunningTotal
+FROM cte_sales
+ORDER BY soldYear, soldMonth
+
+
+
+-- 12. -------------
+-- Display # of cars sold THIS & LAST MONTH
+
+
+-- i) Get data
+SELECT strftime('%Y-%m', soldDate) AS MonthSold,
+  COUNT(*) AS NumberCarsSold
+FROM sales
+GROUP BY strftime('%Y-%m', soldDate)
+
+
+-- ii) Apply window function
+SELECT strftime('%Y-%m', soldDate) AS MonthSold,
+  COUNT(*) AS NumberCarsSold,
+  LAG (COUNT(*), 1, 0 ) OVER calMonth AS LastMonthCarsSold
+FROM sales
+GROUP BY strftime('%Y-%m', soldDate)
+WINDOW calMonth AS (ORDER BY strftime('%Y-%m', soldDate))
+ORDER BY strftime('%Y-%m', soldDate)
