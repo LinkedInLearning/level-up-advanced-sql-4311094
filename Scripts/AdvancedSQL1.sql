@@ -68,7 +68,7 @@ ORDER BY NumOfCarsSold DESC;
 
 
 -- 5. ----------
--- Find Least & Most expensive car sold by EACH employee this year
+-- Find Least & Most expensive car sold by EACH employee THIS year
 
 SELECT emp.employeeId,
     emp.firstName,
@@ -80,3 +80,5 @@ INNER JOIN employee emp
     ON sls.employeeId = emp.employeeId
 WHERE sls.soldDate >= date('now', 'start of year')
 GROUP BY emp.employeeId, emp.firstName, emp.lastName
+
+
