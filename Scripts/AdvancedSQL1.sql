@@ -86,7 +86,7 @@ GROUP BY emp.employeeId, emp.firstName, emp.lastName
 -- Display report for employees who have sold AT LEAST 5 cars
 
 SELECT emp.employeeId,
-    count(*) AS NumOfCarsSold
+    count(*) AS NumOfCarsSold,
     MIN(salesAmount) AS MinSalesAmount,
     MAX(salesAmount) AS MaxSalesAmount
 FROM sales sls 
