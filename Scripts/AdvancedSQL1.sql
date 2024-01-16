@@ -87,7 +87,7 @@ GROUP BY emp.employeeId, emp.firstName, emp.lastName
 
 SELECT emp.employeeId,
     count(*) AS NumOfCarsSold
-    MIN(salesAmount) AS MinSalesAmount
+    MIN(salesAmount) AS MinSalesAmount,
     MAX(salesAmount) AS MaxSalesAmount
 FROM sales sls 
 INNER JOIN employee emp 
