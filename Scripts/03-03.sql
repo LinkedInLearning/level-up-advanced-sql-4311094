@@ -18,7 +18,7 @@ WHERE EngineType = 'Electric';
 
 
 -- Final query
-SELECT sls.soldDate, sls.salesAmount, inv.colour, inv.year
+SELECT sls.salesId,sls.soldDate, sls.salesAmount, inv.colour, inv.year
 FROM sales sls
 INNER JOIN inventory inv
   ON sls.inventoryId = inv.inventoryId
