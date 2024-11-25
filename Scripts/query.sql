@@ -1,9 +1,8 @@
-SELECT firstName, lastName, title
-FROM employee
-LIMIT 5;
-
-GO 
-
-SELECT model, EngineType
-FROM model
-LIMIT 5;
+SELECT emp.firstName,
+  emp.lastName,
+  emp.title,
+  emp.firstName AS ManagerFirstName,
+  emp.lastName AS ManagerLastName
+FROM employee emp
+INNER JOIN employee mng
+  ON emp.managerId = mng.employeeId
