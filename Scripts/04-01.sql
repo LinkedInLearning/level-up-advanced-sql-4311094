@@ -21,6 +21,7 @@ INNER JOIN inventory inv
 INNER JOIN model mdl
   ON mdl.modelId = inv.modelId
 GROUP BY emp.firstName, emp.lastName, mdl.model
+HAVING NumberSold > 1
 
 -- add in the windowing function
 SELECT emp.firstName, emp.lastName, mdl.model,
