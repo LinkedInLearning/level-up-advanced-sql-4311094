@@ -1,0 +1,17 @@
+WITH
+sales_per_month AS(
+  SELECT
+    strftime('%m', soldDate) AS month,
+    strftime('%Y', soldDate) AS year,
+    COUNT(*) AS monthly_sale
+  FROM Sales
+  GROUP BY strftime('%Y-%m', soldDate)
+)
+SELECT 
+  month,
+  year,
+  monthly_sale AS current_month_sale,
+  LAG(monthly_sale,1,0) OVER(
+      PARTITION BY year 
+      ORDER BY month) AS last_month_sale 
+FROM sales_per_month

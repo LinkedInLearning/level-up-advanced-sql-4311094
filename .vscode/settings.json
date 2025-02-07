@@ -18,7 +18,6 @@
   "screencastMode.onlyKeyboardShortcuts": true,
   "terminal.integrated.fontSize": 18,
   "window.zoomLevel": 3,
-  "workbench.activityBar.visible": true,
   "workbench.colorTheme": "Default Light+",
   "workbench.fontAliasing": "antialiased",
   "workbench.statusBar.visible": true,
